@@ -12,11 +12,11 @@
       <supports type="yes" element="beam"></supports>
       <supports type="yes" element="stem"></supports>
       <software>ProxyMusic 4.0.3</software>
-      <encoding-date>2026-11-02</encoding-date>
+      <encoding-date>2026-11-09</encoding-date>
     </encoding>
-    <source>D:\sources\audiveris\data\regression\zizi.png</source>
+    <source>/tmp/xml-export-3072019618463410044/zizi.png</source>
     <miscellaneous>
-      <miscellaneous-field name="source-file">D:\sources\audiveris\data\regression\zizi.png</miscellaneous-field>
+      <miscellaneous-field name="source-file">/tmp/xml-export-3072019618463410044/zizi.png</miscellaneous-field>
       <miscellaneous-field name="source-sheet-1">1 2</miscellaneous-field>
     </miscellaneous>
   </identification>
@@ -42,7 +42,7 @@
   </credit>
   <credit page="1">
     <credit-type>composer</credit-type>
-    <credit-words default-x="1016" default-y="657" font-family="serif" font-size="12">Traditionnel Cajun</credit-words>
+    <credit-words default-x="1016" default-y="657" font-family="serif" font-size="10">Traditionnel Cajun</credit-words>
   </credit>
   <part-list>
     <score-part id="P1">
@@ -996,7 +996,7 @@
         <duration>4</duration>
         <voice>5</voice>
         <type>quarter</type>
-        <stem default-y="-15">up</stem>
+        <stem default-y="-14">up</stem>
         <staff>2</staff>
       </note>
       <note default-x="76">
@@ -1241,9 +1241,6 @@
         <stem default-y="13">up</stem>
         <staff>1</staff>
         <beam number="1">begin</beam>
-        <notations>
-          <slur type="start" number="1" placement="below" default-x="25" default-y="-39" bezier-x="27" bezier-y="-2"></slur>
-        </notations>
       </note>
       <note default-x="113">
         <pitch>
@@ -1282,9 +1279,6 @@
         <stem default-y="10">up</stem>
         <staff>1</staff>
         <beam number="1">end</beam>
-        <notations>
-          <slur type="stop" number="1" default-x="-12" default-y="-38" bezier-x="-27" bezier-y="-3"></slur>
-        </notations>
       </note>
       <note default-x="211">
         <pitch>
