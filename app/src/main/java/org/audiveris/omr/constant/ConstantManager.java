@@ -202,6 +202,42 @@ public class ConstantManager
         return userHolder.getProperty(qName);
     }
 
+    //-------------------//
+    // applyCliConstants //
+    //-------------------//
+    /**
+     * Apply the values given by "-constant" on the command line to the constants that were
+     * registered before the command line was parsed.
+     * <p>
+     * A constant takes its CLI value when it registers (see {@link #addConstant}), but a class
+     * that reads one of its constants in its static initialization (Main reads its locale) has
+     * all its constants registered before the CLI exists, and their CLI values would otherwise
+     * be ignored.
+     * Constants registered later still get their CLI value in addConstant.
+     */
+    public void applyCliConstants ()
+    {
+        final CLI cli = Main.getCli();
+
+        if (cli == null) {
+            return;
+        }
+
+        final Properties cliConstants = cli.getConstants();
+
+        if (cliConstants == null) {
+            return;
+        }
+
+        for (String qName : cliConstants.stringPropertyNames()) {
+            final Constant constant = constants.get(qName);
+
+            if (constant != null) {
+                constant.setStringValue(cliConstants.getProperty(qName));
+            }
+        }
+    }
+
     //------------------//
     // getAllProperties //
     //------------------//
