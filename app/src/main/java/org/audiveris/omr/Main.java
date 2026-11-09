@@ -326,6 +326,9 @@ public class Main
             // First get the provided parameters if any
             cli = new CLI(WellKnowns.TOOL_NAME);
             cli.parseParameters(args);
+
+            // Constants already registered (those of Main itself) take their CLI values now
+            ConstantManager.getInstance().applyCliConstants();
         } catch (CmdLineException ex) {
             logger.info(ct.trans("commands", Arrays.asList(args)));
             logger.warn(ct.trans("error.in.command.line", ex.getLocalizedMessage()));
