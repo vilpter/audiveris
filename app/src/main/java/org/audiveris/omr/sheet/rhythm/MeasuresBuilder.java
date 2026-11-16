@@ -299,11 +299,23 @@ public class MeasuresBuilder
     // emptyCourtesyMeasure //
     //----------------------//
     /**
-     * Remove head notes in very short ending measure (courtesy measure) if any.
+     * Remove an ending stack that lacks a measure for some part, otherwise remove head notes
+     * in very short ending measure (courtesy measure) if any.
      */
     private void emptyCourtesyMeasure ()
     {
         MeasureStack lastStack = system.getLastStack();
+
+        // A stack must have one measure per part, otherwise simply remove this pseudo stack.
+        // This happens when the staves of some part end beyond the system last barline:
+        // only these parts get an ending measure, whatever its width.
+        // Checked first, since a partial stack makes the later RHYTHMS and LINKS steps fail.
+        if (lastStack.getMeasures().size() < system.getParts().size()) {
+            logger.info("Partial ending stack removed {}", lastStack);
+            system.removeStack(lastStack);
+
+            return;
+        }
 
         Measure topMeasure = lastStack.getFirstMeasure();
 
@@ -315,14 +327,6 @@ public class MeasuresBuilder
         int minStandardWidth = system.getSheet().getScale().toPixels(constants.minStandardWidth);
 
         if (topMeasure.getWidth() >= minStandardWidth) {
-            return;
-        }
-
-        // Check stack has one measure per part, otherwise simply remove this pseudo stack
-        if (lastStack.getMeasures().size() < system.getParts().size()) {
-            logger.info("Partial courtesy stack removed {}", lastStack);
-            system.removeStack(lastStack);
-
             return;
         }
 
