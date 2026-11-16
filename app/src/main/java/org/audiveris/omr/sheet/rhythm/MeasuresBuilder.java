@@ -52,6 +52,7 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -312,6 +313,7 @@ public class MeasuresBuilder
         // Checked first, since a partial stack makes the later RHYTHMS and LINKS steps fail.
         if (lastStack.getMeasures().size() < system.getParts().size()) {
             logger.info("Partial ending stack removed {}", lastStack);
+            purgePartialStackHeads(lastStack);
             system.removeStack(lastStack);
 
             return;
@@ -354,6 +356,39 @@ public class MeasuresBuilder
                 }
 
                 head.remove();
+            }
+        }
+    }
+
+    //------------------------//
+    // purgePartialStackHeads //
+    //------------------------//
+    /**
+     * Remove the heads lying in the measures of a partial ending stack, which is about to be
+     * removed, so that no head is left without a containing measure.
+     *
+     * @param stack the partial ending stack
+     */
+    private void purgePartialStackHeads (MeasureStack stack)
+    {
+        // Left abscissa of the stack, for each staff it covers
+        final Map<Staff, Integer> minXs = new HashMap<>();
+
+        for (Measure measure : stack.getMeasures()) {
+            for (Staff staff : measure.getPart().getStaves()) {
+                minXs.put(staff, measure.getAbscissa(LEFT, staff));
+            }
+        }
+
+        for (Inter inter : system.getSig().inters(HeadInter.class)) {
+            final Integer minX = minXs.get(inter.getStaff());
+
+            if ((minX != null) && (inter.getCenter().x >= minX)) {
+                if (logger.isDebugEnabled() || inter.isVip()) {
+                    logger.info("Partial {} purging {}", stack, inter);
+                }
+
+                inter.remove();
             }
         }
     }
