@@ -415,7 +415,7 @@ public class MeasuresBuilder
             GroupLoop:
             for (Group group : groups) {
                 for (Column column : columns) {
-                    if (column.canJoin(group, maxShift)) {
+                    if (column.canJoin(staff, group, maxShift)) {
                         column.addGroup(staff, group);
 
                         continue GroupLoop;
@@ -508,13 +508,23 @@ public class MeasuresBuilder
         /**
          * Tell whether the provided group can be part of this column.
          *
+         * @param staff    the staff of the provided group
          * @param group    provided group
          * @param maxShift maximum abscissa shift allowed
          * @return true if OK
          */
-        public boolean canJoin (Group group,
+        public boolean canJoin (Staff staff,
+                                Group group,
                                 int maxShift)
         {
+            // A column holds at most one group per staff: a second group of the same staff,
+            // however close, must start a column of its own. Otherwise it would be left out of
+            // the column while staying in its staff list, and the staves of the system would
+            // end up with different group counts.
+            if (groups.containsKey(staff)) {
+                return false;
+            }
+
             return Math.abs(group.getDeskewedAbscissa() - getDeskewedAbscissa()) <= maxShift;
         }
 
