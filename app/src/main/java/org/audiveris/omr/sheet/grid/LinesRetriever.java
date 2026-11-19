@@ -765,6 +765,19 @@ public class LinesRetriever
             return;
         }
 
+        // Lines that bend away near a page border are missing up to that border: a long way.
+        // A word printed on the staff, such as a part name, gives short strokes at line
+        // heights, which the median of line ends and the interline check below would accept.
+        if ((dir * (newEnd - oldEnd)) < params.minStaffExtension) {
+            logger.debug(
+                    "Staff#{} {} extension of {} pixels too short",
+                    staff.getId(),
+                    side,
+                    dir * (newEnd - oldEnd));
+
+            return;
+        }
+
         // Check the lines are still one interline apart, where all lines but one exist
         final double xCheck = (side == RIGHT) ? sorted[1] : sorted[lineCount - 2];
         final double interline = staff.getSpecificInterline();
@@ -1977,6 +1990,10 @@ public class LinesRetriever
                 1.0,
                 "Minimum extension of a staff line beyond its end");
 
+        private final Scale.Fraction minStaffExtension = new Scale.Fraction(
+                4.0,
+                "Minimum extension of a whole staff where its lines bend away");
+
         private final Scale.Fraction maxLineExtensionGap = new Scale.Fraction(
                 4.0,
                 "Maximum abscissa gap between a staff line end and its extension");
@@ -2180,6 +2197,8 @@ public class LinesRetriever
 
         final int minLineExtension;
 
+        final int minStaffExtension;
+
         final int maxLineExtensionGap;
 
         final double maxLineJunctionDy;
@@ -2237,6 +2256,7 @@ public class LinesRetriever
             maxThinStickerWeight = scale.toPixels(constants.maxThinStickerWeight);
             maxEndingDx = scale.toPixels(constants.maxEndingDx);
             minLineExtension = scale.toPixels(constants.minLineExtension);
+            minStaffExtension = scale.toPixels(constants.minStaffExtension);
             maxLineExtensionGap = scale.toPixels(constants.maxLineExtensionGap);
             maxLineJunctionDy = scale.toPixelsDouble(constants.maxLineJunctionDy);
             maxLineExtensionInterlineDev = constants.maxLineExtensionInterlineDev.getValue();
