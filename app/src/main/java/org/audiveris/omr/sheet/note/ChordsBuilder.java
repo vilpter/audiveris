@@ -411,6 +411,20 @@ public class ChordsBuilder
                 measure = part.getMeasureAt(chord.getHeadLocation());
             }
 
+            // Heads that reach into the area of a neighbor staff of another part
+            // (ledger notes when staves are tight): look up the measure with the chord's own staff
+            if (measure == null) {
+                for (Staff staff : chord.getStaves()) {
+                    if ((staff != null) && (staff.getPart() == part)) {
+                        measure = part.getMeasureAt(chord.getHeadLocation(), staff);
+
+                        if (measure != null) {
+                            break;
+                        }
+                    }
+                }
+            }
+
             if (measure != null) {
                 // Case of chord which have changed of containing measure
                 // while being built head after head
