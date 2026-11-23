@@ -1312,7 +1312,9 @@ public class SystemInfo
         final Staff closest = getClosestStaff(point);
 
         if (closest == null) {
-            return Collections.emptyList();
+            // Staff areas stop a margin away from the neighbor staves, so with tight staves
+            // a band between two staves can belong to no staff area: use staff lines instead
+            return getStavesAroundByLines(point);
         }
 
         final double toTop = closest.getFirstLine().yAt(point.getX()) - point.getY();
@@ -1333,6 +1335,40 @@ public class SystemInfo
         }
 
         return staves.subList(first, last + 1);
+    }
+
+    //------------------------//
+    // getStavesAroundByLines //
+    //------------------------//
+    /**
+     * Report the staves just around the provided point, using only staff lines.
+     * <p>
+     * If point lies within the lines of a staff, just this staff is returned.
+     * If point lies between two staves, both staves are returned.
+     * Above the first staff or below the last staff, nothing is returned.
+     *
+     * @param point the provided point
+     * @return proper sub-list of staves (top down), perhaps empty
+     */
+    private List<Staff> getStavesAroundByLines (Point2D point)
+    {
+        final double x = point.getX();
+        final double y = point.getY();
+
+        for (int i = 0; i < staves.size(); i++) {
+            final Staff staff = staves.get(i);
+
+            if (y < staff.getFirstLine().yAt(x)) {
+                // Point is above this staff, and below the previous one if any
+                return (i == 0) ? Collections.emptyList() : staves.subList(i - 1, i + 1);
+            }
+
+            if (y <= staff.getLastLine().yAt(x)) {
+                return staves.subList(i, i + 1);
+            }
+        }
+
+        return Collections.emptyList();
     }
 
     //-------------//
